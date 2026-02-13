@@ -581,11 +581,18 @@ class NotificationService:
                 "---",
                 "",
             ])
+
+        from datetime import datetime, timezone, timedelta
+        # 定义北京时区（UTC+8）
+        beijing_tz = timezone(timedelta(hours=8))
+        # 获取当前时间并设置为北京时间
+        beijing_now = datetime.now(beijing_tz)
         
         # 底部信息（去除免责声明）
         report_lines.extend([
             "",
-            f"*报告生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*",
+            #f"*报告生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*",
+            f"*报告生成时间：{beijing_now.strftime('%Y-%m-%d %H:%M:%S')}*",
         ])
         
         return "\n".join(report_lines)
@@ -934,11 +941,17 @@ class NotificationService:
                 "---",
                 "",
             ])
+        from datetime import datetime, timezone, timedelta
+        # 定义北京时区（UTC+8）
+        beijing_tz = timezone(timedelta(hours=8))
+        # 获取当前时间并设置为北京时间
+        beijing_now = datetime.now(beijing_tz)
         
-        # 底部（去除免责声明）
+        # 底部信息（去除免责声明）
         report_lines.extend([
             "",
-            f"*报告生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*",
+            #f"*报告生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*",
+            f"*报告生成时间：{beijing_now.strftime('%Y-%m-%d %H:%M:%S')}*",
         ])
         
         return "\n".join(report_lines)
