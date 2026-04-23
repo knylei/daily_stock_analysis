@@ -9,7 +9,9 @@ Tests for Jinja2 report rendering and fallback behavior.
 
 import sys
 import unittest
-from unittest.mock import MagicMock
+from datetime import datetime
+from unittest.mock import MagicMock, patch
+from zoneinfo import ZoneInfo
 
 try:
     import litellm  # noqa: F401
@@ -140,3 +142,16 @@ class TestReportRenderer(unittest.TestCase):
         out = render("markdown", [], summary_only=True)
         self.assertIsNotNone(out)
         self.assertIn("0", out)
+
+    def test_render_uses_shanghai_time_for_default_timestamp(self) -> None:
+        """Default report date and timestamp should be rendered in Asia/Shanghai."""
+        r = _make_result()
+        fake_now = datetime(2026, 4, 22, 12, 35, 13, tzinfo=ZoneInfo("Asia/Shanghai"))
+
+        with patch("src.services.report_renderer.datetime") as mock_datetime:
+            mock_datetime.now.return_value = fake_now
+            out = render("wechat", [r])
+
+        self.assertIsNotNone(out)
+        self.assertIn("2026-04-22", out)
+        self.assertIn("12:35", out)

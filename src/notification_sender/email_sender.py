@@ -8,6 +8,7 @@ Email 发送提醒服务
 import logging
 from typing import Optional, List
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
@@ -21,6 +22,8 @@ from src.formatters import markdown_to_html_document
 
 
 logger = logging.getLogger(__name__)
+
+SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
 
 # SMTP 服务器配置（自动识别）
@@ -157,7 +160,7 @@ class EmailSender:
         try:
             # 生成主题
             if subject is None:
-                date_str = datetime.now().strftime('%Y-%m-%d')
+                date_str = datetime.now(SHANGHAI_TZ).strftime('%Y-%m-%d')
                 subject = f"📈 股票智能分析报告 - {date_str}"
             
             # 将 Markdown 转换为简单 HTML
@@ -229,7 +232,7 @@ class EmailSender:
         receivers = receivers or self._email_config['receivers']
         server: Optional[smtplib.SMTP] = None
         try:
-            date_str = datetime.now().strftime('%Y-%m-%d')
+            date_str = datetime.now(SHANGHAI_TZ).strftime('%Y-%m-%d')
             subject = f"📈 股票智能分析报告 - {date_str}"
             msg = MIMEMultipart('related')
             msg['Subject'] = Header(subject, 'utf-8')
