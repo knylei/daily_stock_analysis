@@ -10,8 +10,10 @@ Any expensive data preparation should be injected by the caller via extra_contex
 """
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from zoneinfo import ZoneInfo
 
 from src.analyzer import AnalysisResult
 from src.config import get_config
@@ -26,6 +28,8 @@ from src.report_language import (
 )
 
 logger = logging.getLogger(__name__)
+
+SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
 
 def _escape_md(text: str) -> str:
@@ -86,6 +90,7 @@ def render(
         Rendered string, or None on error (caller should fallback).
     """
     from datetime import datetime
+    from zoneinfo import ZoneInfo
 
     try:
         from jinja2 import Environment, FileSystemLoader, select_autoescape
