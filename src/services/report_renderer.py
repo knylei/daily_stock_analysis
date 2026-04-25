@@ -10,7 +10,7 @@ Any expensive data preparation should be injected by the caller via extra_contex
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
@@ -30,6 +30,10 @@ from src.report_language import (
 logger = logging.getLogger(__name__)
 
 SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
+
+
+def _beijing_now() -> datetime:
+    return datetime.now(timezone.utc).astimezone(SHANGHAI_TZ)
 
 
 def _escape_md(text: str) -> str:
@@ -95,8 +99,9 @@ def render(
         logger.warning("jinja2 not installed, report renderer disabled")
         return None
 
+    now = _beijing_now()
     if report_date is None:
-        report_date = datetime.now(SHANGHAI_TZ).strftime("%Y-%m-%d")
+        report_date = now.strftime("%Y-%m-%d")
 
     templates_dir = _resolve_templates_dir()
     template_name = f"report_{platform}.j2"
@@ -134,7 +139,7 @@ def render(
     sell_count = sum(1 for r in results if getattr(r, "decision_type", "") == "sell")
     hold_count = sum(1 for r in results if getattr(r, "decision_type", "") in ("hold", ""))
 
-    report_timestamp = datetime.now(SHANGHAI_TZ).strftime("%Y-%m-%d %H:%M:%S")
+    report_timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
 
     def failed_checks(checklist: List[str]) -> List[str]:
         return [c for c in (checklist or []) if c.startswith("❌") or c.startswith("⚠️")]

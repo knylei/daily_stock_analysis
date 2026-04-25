@@ -146,10 +146,10 @@ class TestReportRenderer(unittest.TestCase):
     def test_render_uses_shanghai_time_for_default_timestamp(self) -> None:
         """Default report date and timestamp should be rendered in Asia/Shanghai."""
         r = _make_result()
-        fake_now = datetime(2026, 4, 22, 12, 35, 13, tzinfo=ZoneInfo("Asia/Shanghai"))
+        fake_utc_now = datetime(2026, 4, 22, 4, 35, 13, tzinfo=ZoneInfo("UTC"))
 
         with patch("src.services.report_renderer.datetime") as mock_datetime:
-            mock_datetime.now.return_value = fake_now
+            mock_datetime.now.return_value = fake_utc_now
             out = render("wechat", [r])
 
         self.assertIsNotNone(out)
